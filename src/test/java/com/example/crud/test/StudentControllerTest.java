@@ -4,8 +4,7 @@ import com.example.crud.test.controllers.StudentController;
 import com.example.crud.test.entities.Student;
 import com.example.crud.test.services.StudentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudentControllerTest {
     @Autowired
     private StudentController studentController;
@@ -41,6 +41,7 @@ public class StudentControllerTest {
     }
     //Test per la creazione di un nuovo studente
     @Test
+    @Order(1)
     void createStudent() throws Exception{
         Student student = new Student();
         student.setId(1L);
@@ -59,8 +60,8 @@ public class StudentControllerTest {
 
     //Test per avere la lista completa degli studenti
     @Test
+    @Order(3)
     void getAllStudent() throws Exception{
-        createStudent();
         MvcResult result = this.mockMvc.perform(get("/studente/getListaStudenti"))
                 .andDo(print()).andReturn();
 
@@ -70,9 +71,10 @@ public class StudentControllerTest {
     }
     //Test per cercare uno studente tramite id
     @Test
+    @Order(4)
     void getStudenteId()throws Exception{
         Long studenteId = 1L;
-        createStudent();
+
 
         MvcResult resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/studente/getStudenteId/{id}", studenteId))
                 .andExpect(status().isOk())
@@ -80,9 +82,9 @@ public class StudentControllerTest {
     }
     //Test per aggiornare uno studente tramite l'id
     @Test
+    @Order(2)
     void updateStudenteId()throws Exception{
         Long studenteId = 1L;
-        createStudent();
         Student updateStudente = new Student(studenteId,"Pippo","Baudo",false);
         String studentJSON = objectMapper.writeValueAsString(updateStudente);
 
@@ -96,6 +98,7 @@ public class StudentControllerTest {
     }
     //Test per settare isWorking
     @Test
+    @Order(5)
     void updateIsWorking()throws Exception{
         Long studenteId = 1L;
         boolean isWorking = false;
@@ -106,8 +109,8 @@ public class StudentControllerTest {
     }
     //Test per l'eliminazione di uno studente
     @Test
+    @Order(6)
     void deleteStudente() throws Exception {
-        createStudent();
         Long studentId = 1L;
 
         MvcResult result = mockMvc.perform(delete("/studente/deleteStudenteId/{id}",studentId)
